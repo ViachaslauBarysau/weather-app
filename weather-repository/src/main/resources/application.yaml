@@ -1,0 +1,23 @@
+server:
+  port: 8083
+
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+  data:
+    mongodb:
+      user: guest
+      password: guest
+      host: localhost
+      port: 27017
+      database: weather
+      authentication-database: admin
+  main:
+    allow-bean-definition-overriding: true
+mq:
+  weather.capture.queue: weather-capture-queue
+

@@ -1,0 +1,24 @@
+server:
+  port: 8082
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+  data:
+    mongodb:
+      user: guest
+      password: guest
+      host: localhost
+      port: 27017
+      database: weather
+      authentication-database: admin
+mq:
+  weather.capture.queue: weather-capture-queue
+api:
+  url:
+    converter: https://api.openweathermap.org/geo/1.0/direct?q=%s&limit=1&appid=%s
+    weather: https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=%s
+  key: 55470cb25767b2126f37af0f0ce7f958

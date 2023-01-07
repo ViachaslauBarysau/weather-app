@@ -1,0 +1,71 @@
+version: '3.8'
+services:
+  mongo-db:
+    image: mongo:latest
+    hostname: mongo-db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=guest
+      - MONGO_INITDB_ROOT_PASSWORD=guest
+    ports:
+      - "27017:27017"
+    container_name: mongo-db
+    volumes:
+      - ./db/:/data/db
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+  weather-service:
+    build:
+      context: ./weather-service
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    container_name: weather-service
+    links:
+      - mongo-db
+      - rabbitmq
+    depends_on:
+      - mongo-db
+      - rabbitmq
+    environment:
+      - SERVER_PORT=8082
+      - SPRING_DATA_MONGODB_HOST=mongo-db
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_USERNAME=guest
+      - SPRING_DATA_MONGODB_PASSWORD=guest
+      - SPRING_DATA_MONGODB_DATABASE=weather
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+  weather-repository:
+    build:
+      context: ./weather-repository
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    container_name: weather-repository
+    links:
+      - mongo-db
+      - rabbitmq
+    depends_on:
+      - mongo-db
+      - rabbitmq
+    environment:
+      - SERVER_PORT=8082
+      - SPRING_DATA_MONGODB_HOST=mongo-db
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_USERNAME=guest
+      - SPRING_DATA_MONGODB_PASSWORD=guest
+      - SPRING_DATA_MONGODB_DATABASE=weather
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
